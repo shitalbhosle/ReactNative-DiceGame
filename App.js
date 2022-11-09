@@ -1,80 +1,92 @@
-import React, {useState} from 'react';
-import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
+import React from 'react';
+import {
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+} from 'react-native';
+import Sound from 'react-native-sound';
 
-import DiceOne from './assets/dice1.png';
-import DiceTwo from './assets/dice2.png';
-import DiceThree from './assets/dice3.png';
-import DiceFour from './assets/dice4.png';
-import DiceFive from './assets/dice5.png';
-import DiceSix from './assets/dice6.png';
-
+const soundList = [
+  require('./assets/one.wav'),
+  require('./assets/two.wav'),
+  require('./assets/three.wav'),
+  require('./assets/four.wav'),
+  require('./assets/five.wav'),
+  require('./assets/six.wav'),
+  require('./assets/seven.wav'),
+  require('./assets/eight.wav'),
+  require('./assets/nine.wav'),
+  require('./assets/ten.wav'),
+];
 const App = () => {
-  const [uri, seturi] = useState(DiceOne);
+  const playSound = sounds => {
+    const soundVar = new Sound(sounds, Sound.MAIN_BUNDLE, error => {
+      if (error) {
+        console.log('NOT ABLE TO PLAY SOUND');
+      }
+    });
+    setTimeout(() => {
+      soundVar.play();
+    }, 1000);
+    // soundVar.play(); this is not work so we need to use setTimeout here
 
-  const playButton = () => {
-    let randomNumber = Math.floor(Math.random() * 6) + 1;
-
-    switch (randomNumber) {
-      case 1: {
-        seturi(DiceOne);
-        break;
-      }
-      case 2: {
-        seturi(DiceTwo);
-        break;
-      }
-      case 3: {
-        seturi(DiceThree);
-        break;
-      }
-      case 4: {
-        seturi(DiceFour);
-        break;
-      }
-      case 5: {
-        seturi(DiceFive);
-        break;
-      }
-      case 6: {
-        seturi(DiceSix);
-        break;
-      }
-      default:
-        seturi(DiceOne);
-        break;
-    }
+    soundVar.release();
   };
   return (
-    <View style={styles.container}>
-        <TouchableOpacity onPress={playButton}>
-      <Image style={styles.image} source={uri}></Image></TouchableOpacity>
-      <TouchableOpacity onPress={playButton}>
-        <Text style={styles.text}>Play Game</Text>
-      </TouchableOpacity>
-    </View>
+    <ScrollView style={styles.container}>
+      <Image style={styles.logo} source={require('./assets/logo.png')} />
+
+      <View style={styles.gridContainer}>
+        {soundList.map(sound => (
+          <TouchableOpacity
+            style={styles.box}
+            key={sound}
+            onPress={() => {
+              playSound(sound);
+            }}>
+            <Text style={styles.text}>{sound}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </ScrollView>
   );
 };
+
+export default App;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#1e262c',
+  },
+  logo: {
+    alignSelf: 'center',
+    marginTop: 15,
+  },
+  gridContainer: {
+    flex: 1,
+    margin: 5,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    justifyContent: 'space-around',
+  },
+  box: {
+    height: 110,
+    width: '46%',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#0E5E6F',
-  },
-  image: {
-    width: 200,
-    height: 200,
+    backgroundColor: '#0f4c75',
+    marginVertical: 6,
+    borderRadius: 5,
+    shadowColor: '#393e46',
+    elevation: 5,
   },
   text: {
-    marginTop: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderWidth: 2,
-    borderColor: '#6B728E',
-    borderRadius: 5,
-    fontSize: 25,
-    color: 'white',
+    fontSize: 50,
+    color: '#ff4301',
   },
 });
-export default App;
